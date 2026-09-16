@@ -2,9 +2,10 @@
 
 Application de **détection de fraude bancaire en temps réel** basée sur un modèle **XGBoost**, développée avec **Streamlit**. Le projet s'appuie sur des données synthétiques inspirées des dynamiques de la **NIBSS** (Nigerian Inter-Bank Settlement System).
 
-![Badge Streamlit](https://img.shields.io/badge/Streamlit-1.57-FF4B4B?style=flat-square)
+[![Badge Streamlit](https://img.shields.io/badge/Streamlit-1.57-FF4B4B?style=flat-square)](https://tekyamsfrauddetectionproject.streamlit.app/)
 ![Badge Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square)
 ![Badge XGBoost](https://img.shields.io/badge/XGBoost-3.2-orange?style=flat-square)
+[![Badge App Live](https://img.shields.io/badge/App_Streamlit-live-2ea44f?style=flat-square)](https://tekyamsfrauddetectionproject.streamlit.app/)
 
 ---
 
@@ -138,6 +139,14 @@ L'application s'ouvre automatiquement sur **http://localhost:8501**.
 | `matplotlib` | 3.10 | Graphiques (notebook) |
 | `seaborn` | 0.13 | Visualisation statistique (notebook) |
 | `shap` | 0.51 | Interprétabilité du modèle (notebook) |
+
+---
+
+##  Application en ligne
+
+L'application est déployée gratuitement sur **Streamlit Cloud** et accessible à tout moment :
+
+👉 **[tekyamsfrauddetectionproject.streamlit.app](https://tekyamsfrauddetectionproject.streamlit.app/)**
 
 ---
 
