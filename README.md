@@ -8,7 +8,7 @@ Application de **détection de fraude bancaire en temps réel** basée sur un mo
 
 ---
 
-## 📌 Aperçu
+##  Aperçu
 
 Ce projet permet de **simuler l'évaluation d'une transaction bancaire** : l'utilisateur renseigne les caractéristiques d'une transaction (montant, canal, fréquence, etc.) via une interface web intuitive, et le modèle **XGBoost** prédit en quelques millisecondes si la transaction est **frauduleuse ou légitime**, avec un niveau de probabilité détaillé.
 
@@ -22,23 +22,23 @@ Ce projet permet de **simuler l'évaluation d'une transaction bancaire** : l'uti
 
 **Optimisation du seuil de décision** : le seuil par défaut (0,5) n'est pas optimal. En ajustant le seuil à **0,65**, on obtient un **F1 = 0,854** (Précision = 0,945 / Rappel = 0,778), soit moins de 1% de faux positifs.
 
-**Validation croisée stratifiée (5 replis)** : ROC-AUC moyen = **0,959 ± 0,003**, Rappel moyen = **0,807 ± 0,010** — performance stable et non dépendante d'un découpage chanceux.
+**Validation croisée stratifiée (5 replis)** : ROC-AUC moyen = **0,959 ± 0,003**, Rappel moyen = **0,807 ± 0,010** performance stable et non dépendante d'un découpage chanceux.
 
-> 💡 **Note** : l'accuracy (1,00) est trompeuse sur un dataset déséquilibré à 99,7 % — un modèle qui blockerait tout aurait déjà 99,7 %. Les vraies métriques de référence sont le **ROC-AUC**, la **PR-AUC**, le **rappel** (ne pas rater de fraude) et la **précision** (ne pas bloquer d'honnêtes clients). XGBoost excelle sur tous ces axes grâce à `scale_pos_weight=333`.
-
----
-
-## ✨ Fonctionnalités
-
-- 🎛️ **Simulateur interactif** : réglage dynamique des paramètres de transaction via la barre latérale
-- 📊 **Prédiction en temps réel** : probabilité de fraude (0–100 %) calculée par XGBoost
-- 🚨 **Décision automatisée** : blocage de la transaction si suspicion élevée, avec recommandations système
-- 🧠 **Pré-traitement identique à l'entraînement** : standardisation (`StandardScaler`), encodage one-hot, ingénierie de features (`amount_log`, `velocity_score`, `composite_risk`, etc.)
-- 🌍 **Déployable sur Streamlit Cloud** : gratuit et sans frais d'infrastructure
+>  **NB** : l'accuracy (1,00) est trompeuse sur un dataset déséquilibré à 99,7 % . Les vraies métriques de référence sont le **ROC-AUC**, la **PR-AUC**, le **rappel** (ne pas rater de fraude) et la **précision** (ne pas bloquer d'honnêtes clients). XGBoost excelle sur tous ces axes grâce à `scale_pos_weight=333`.
 
 ---
 
-## 🗂️ Structure du projet
+##  Fonctionnalités
+
+-  **Simulateur interactif** : réglage dynamique des paramètres de transaction via la barre latérale
+-  **Prédiction en temps réel** : probabilité de fraude (0–100 %) calculée par XGBoost
+-  **Décision automatisée** : blocage de la transaction si suspicion élevée, avec recommandations système
+-  **Pré-traitement identique à l'entraînement** : standardisation (`StandardScaler`), encodage one-hot, ingénierie de features (`amount_log`, `velocity_score`, `composite_risk`, etc.)
+-  **Déploiement sur Streamlit Cloud** : gratuit et sans frais d'infrastructure
+
+---
+
+##  Structure du projet
 
 ```
 Fraud_detection_project/
@@ -46,17 +46,17 @@ Fraud_detection_project/
 ├── exploration.ipynb         # Analyse exploratoire + entraînement & évaluation des modèles
 ├── requirements.txt          # Dépendances Python minimales pour l'application
 ├── data/
-│   ├── nibss_fraud_dataset.csv   # ⚠️ 1M transactions (~423 MB) — non versionné (voir .gitignore)
-│   └── data_dictionary.csv       # 📖 Dictionnaire des 38 colonnes du jeu de données
+│   ├── nibss_fraud_dataset.csv   #  1M transactions (~423 MB) 
+│   └── data_dictionary.csv       #  Dictionnaire des 38 colonnes du jeu de données
 └── models/
-    ├── xgboost_fraud_model.pkl   # ✅ Modèle XGBoost entraîné et sérialisé
+    ├── xgboost_fraud_model.pkl   #  Modèle XGBoost entraîné et sérialisé
     ├── scaler.pkl                # StandardScaler ajusté sur les données d'entraînement
     └── feature_columns.pkl       # Ordre exact des 63 colonnes attendu par le modèle
 ```
 
 ---
 
-## 📊 Jeu de données
+##  Jeu de données
 
 Le jeu de données (`data/nibss_fraud_dataset.csv`) contient **1 000 000 de transactions** sur l'année 2023, avec **38 colonnes** :
 
@@ -70,9 +70,9 @@ Le jeu de données (`data/nibss_fraud_dataset.csv`) contient **1 000 000 de tran
 
 ---
 
-## ✅ Évaluation et validation
+##  Évaluation et validation
 
-Le notebook `exploration.ipynb` ne se limite pas à l'accuracy — il inclut une **évaluation robuste** adaptée au déséquilibre des classes :
+Le notebook `exploration.ipynb` ne se limite pas à l'accuracy, il inclut une **évaluation robuste** adaptée au déséquilibre des classes :
 
 - **ROC-AUC** (0,969) : capacité du modèle à distinguer fraudes et transactions légitimes ;
 - **PR-AUC** (0,839) : pertinence des alertes, métrique clé quand la classe cible représente 0,3 % ;
@@ -83,7 +83,7 @@ Le notebook `exploration.ipynb` ne se limite pas à l'accuracy — il inclut une
 
 ---
 
-## 🚀 Installation et exécution locale
+##  Installation et exécution locale
 
 ### Prérequis
 - Python **3.12+**
@@ -93,7 +93,7 @@ Le notebook `exploration.ipynb` ne se limite pas à l'accuracy — il inclut une
 
 ```bash
 # 1. Cloner le dépôt
-git clone https://github.com/<votre-utilisateur>/Fraud_detection_project.git
+git clone https://github.com/TekyAms/Fraud_detection_project.git
 cd Fraud_detection_project
 
 # 2. Créer un environnement virtuel
@@ -116,29 +116,7 @@ L'application s'ouvre automatiquement sur **http://localhost:8501**.
 
 ---
 
-## ☁️ Déploiement sur Streamlit Cloud (gratuit)
-
-### Depuis votre ordinateur
-
-1. Poussez ce dépôt sur GitHub (voir section suivante).
-2. Rendez-vous sur **https://share.streamlit.io**.
-3. Cliquez sur **« Create app »** puis **« Deploy now »**.
-4. Renseignez :
-   - **Repository** : `votre-utilisateur/Fraud_detection_project`
-   - **Branch** : `main`
-   - **Main file path** : `app.py`
-5. Cliquez sur **Deploy**. (⚠️ Un compte Streamlit Cloud est requis — connexion avec GitHub.)
-6. Votre application est en ligne à une URL du type `https://votre-utilisateur-fraud-detection-project-xxxxx.streamlit.app`.
-
-### Vérifications importantes
-
-- ✅ Les modèles `.pkl` (~395 KB) sont **bien inclus** dans le dépôt (ils sont nécessaires à l'app).
-- ✅ Le CSV de ~423 MB est **exclu** du dépôt — l'application n'en a pas besoin.
-- ✅ `requirements.txt` couvre aussi bien l'application (5 packages) que le notebook (8 packages avec `matplotlib`, `seaborn`, `shap`). Pour un déploiement cloud plus rapide, vous pouvez retirer les 3 packages notebook.
-
----
-
-## 🔍 Comment fonctionne la prédiction
+##  Comment fonctionne la prédiction
 
 1. L'utilisateur renseigne **montant**, **velocity score**, **ratio montant/moyenne**, **composite risk**, **canal** et **catégorie commerçant**.
 2. L'app reconstruit le vecteur de features complet (mêmes transformations qu'à l'entraînement : `log1p`, one-hot encoding, valeurs par défaut pour les variables temporelles).
@@ -148,7 +126,7 @@ L'application s'ouvre automatiquement sur **http://localhost:8501**.
 
 ---
 
-## 🛠️ Dépendances
+##  Dépendances
 
 | Package | Version | Utilisation |
 |---------|---------|-------------|
@@ -161,16 +139,8 @@ L'application s'ouvre automatiquement sur **http://localhost:8501**.
 | `seaborn` | 0.13 | Visualisation statistique (notebook) |
 | `shap` | 0.51 | Interprétabilité du modèle (notebook) |
 
-> 💡 Les 3 derniers packages ne sont utiles que pour **relancer le notebook**. L'application Streamlit n'en a pas besoin — vous pouvez temporairement les retirer de `requirements.txt` pour accélérer le déploiement sur Streamlit Cloud.
-
 ---
 
-## 📜 Licence
+##  Contact
 
-Projet réalisé à des fins **pédagogiques et de démonstration**. Les données sont **synthétiques** — toute ressemblance avec des transactions réelles est fortuite.
-
----
-
-## 📧 Contact
-
-Projet développé avec ❤️ — retours et suggestions bienvenus (GitHub Issues).
+Projet développé par **Tèkiyath AMOUSSA alias TekyAms**, retours et suggestions bienvenus.
