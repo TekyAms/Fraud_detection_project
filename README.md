@@ -14,13 +14,17 @@ Ce projet permet de **simuler l'évaluation d'une transaction bancaire** : l'uti
 
 À partir d'un jeu de **1 000 000 de transactions** (taux de fraude : 0,3 %), trois modèles ont été entraînés et comparés :
 
-| Modèle | Précision (fraude) | Rappel (fraude) | Score F1 (fraude) |
-|--------|--------------------|-----------------|-------------------|
-| Logistic Regression | — | — | — |
-| Random Forest | — | — | — |
-| **XGBoost** ✅ | **0.77** | **0.82** | **0.79** |
+| Modèle | ROC-AUC | PR-AUC | Précision (fraude) | Rappel (fraude) | F1 (fraude) |
+|--------|---------|--------|--------------------|-----------------|-------------|
+| Logistic Regression | — | — | 0.01 | 0.70 | 0.01 |
+| Random Forest | — | — | 0.01 | 0.78 | 0.03 |
+| **XGBoost** ✅ | **0.969** | **0.839** | **0.77** | **0.82** | **0.79** |
 
-> 💡 **Note** : les métriques détaillées de la Logistic Regression et du Random Forest sont disponibles dans le notebook `exploration.ipynb`.
+**Optimisation du seuil de décision** : le seuil par défaut (0,5) n'est pas optimal. En ajustant le seuil à **0,65**, on obtient un **F1 = 0,854** (Précision = 0,945 / Rappel = 0,778), soit moins de 1% de faux positifs.
+
+**Validation croisée stratifiée (5 replis)** : ROC-AUC moyen = **0,959 ± 0,003**, Rappel moyen = **0,807 ± 0,010** — performance stable et non dépendante d'un découpage chanceux.
+
+> 💡 **Note** : l'accuracy (1,00) est trompeuse sur un dataset déséquilibré à 99,7 % — un modèle qui blockerait tout aurait déjà 99,7 %. Les vraies métriques de référence sont le **ROC-AUC**, la **PR-AUC**, le **rappel** (ne pas rater de fraude) et la **précision** (ne pas bloquer d'honnêtes clients). XGBoost excelle sur tous ces axes grâce à `scale_pos_weight=333`.
 
 ---
 
@@ -39,23 +43,22 @@ Ce projet permet de **simuler l'évaluation d'une transaction bancaire** : l'uti
 ```
 Fraud_detection_project/
 ├── app.py                    # Application Streamlit (interface de simulation)
-├── main.py                   # Script d'exemple (généré par défaut, non utilisé)
 ├── exploration.ipynb         # Analyse exploratoire + entraînement & évaluation des modèles
 ├── requirements.txt          # Dépendances Python minimales pour l'application
 ├── data/
 │   ├── nibss_fraud_dataset.csv   # ⚠️ 1M transactions (~423 MB) — non versionné (voir .gitignore)
-│   └── data_dictionary.csv       # 📖 Dictionnaire des 39 colonnes du jeu de données
+│   └── data_dictionary.csv       # 📖 Dictionnaire des 38 colonnes du jeu de données
 └── models/
     ├── xgboost_fraud_model.pkl   # ✅ Modèle XGBoost entraîné et sérialisé
     ├── scaler.pkl                # StandardScaler ajusté sur les données d'entraînement
-    └── feature_columns.pkl       # Ordre exact des colonnes attendu par le modèle
+    └── feature_columns.pkl       # Ordre exact des 63 colonnes attendu par le modèle
 ```
 
 ---
 
 ## 📊 Jeu de données
 
-Le jeu de données (`data/nibss_fraud_dataset.csv`) contient **1 000 000 de transactions** sur l'année 2023, avec **39 colonnes** :
+Le jeu de données (`data/nibss_fraud_dataset.csv`) contient **1 000 000 de transactions** sur l'année 2023, avec **38 colonnes** :
 
 - **Identifiants & temporelles** : `transaction_id`, `customer_id`, `timestamp`, `hour`, `day_of_week`, `month`, `is_weekend`, `is_peak_hour`
 - **Transaction** : `amount`, `channel` (Mobile, Web, POS, IB, ECOM, ATM), `merchant_category`, `bank`, `location`
@@ -64,6 +67,19 @@ Le jeu de données (`data/nibss_fraud_dataset.csv`) contient **1 000 000 de tran
 - **Cible** : `is_fraud` (0 = légitime, 1 = frauduleux) et `fraud_technique`
 
 > ⚠️ **Attention** : le fichier CSV (~423 MB) **dépasse la limite de GitHub** (100 MB). Il est donc exclu du dépôt via `.gitignore`. Pour relancer le notebook, régénérez/téléchargez le CSV dans le dossier `data/`. Le **déploiement Streamlit ne nécessite pas ce fichier**, uniquement les modèles pré-entraînés.
+
+---
+
+## ✅ Évaluation et validation
+
+Le notebook `exploration.ipynb` ne se limite pas à l'accuracy — il inclut une **évaluation robuste** adaptée au déséquilibre des classes :
+
+- **ROC-AUC** (0,969) : capacité du modèle à distinguer fraudes et transactions légitimes ;
+- **PR-AUC** (0,839) : pertinence des alertes, métrique clé quand la classe cible représente 0,3 % ;
+- **Courbe Précision-Rappel** avec baseline non-informative ;
+- **Optimisation du seuil de décision** : tableau des F1/Précision/Rappel pour chaque seuil (0,05 → 0,95), avec identification du seuil optimal (0,65) ;
+- **Validation croisée stratifiée** (5 replis) : stabilité des performances entre replis ;
+- **Split temporel anti-leakage** : entraînement sur le passé, test sur le futur, pour reproduire le déploiement réel.
 
 ---
 
@@ -118,7 +134,7 @@ L'application s'ouvre automatiquement sur **http://localhost:8501**.
 
 - ✅ Les modèles `.pkl` (~395 KB) sont **bien inclus** dans le dépôt (ils sont nécessaires à l'app).
 - ✅ Le CSV de ~423 MB est **exclu** du dépôt — l'application n'en a pas besoin.
-- ✅ `requirements.txt` est minimisé (5 packages seulement) pour un déploiement rapide et fiable.
+- ✅ `requirements.txt` couvre aussi bien l'application (5 packages) que le notebook (8 packages avec `matplotlib`, `seaborn`, `shap`). Pour un déploiement cloud plus rapide, vous pouvez retirer les 3 packages notebook.
 
 ---
 
@@ -141,6 +157,11 @@ L'application s'ouvre automatiquement sur **http://localhost:8501**.
 | `numpy` | 2.4 | Calculs numériques |
 | `scikit-learn` | 1.8 | StandardScaler |
 | `xgboost` | 3.2 | Modèle de classification |
+| `matplotlib` | 3.10 | Graphiques (notebook) |
+| `seaborn` | 0.13 | Visualisation statistique (notebook) |
+| `shap` | 0.51 | Interprétabilité du modèle (notebook) |
+
+> 💡 Les 3 derniers packages ne sont utiles que pour **relancer le notebook**. L'application Streamlit n'en a pas besoin — vous pouvez temporairement les retirer de `requirements.txt` pour accélérer le déploiement sur Streamlit Cloud.
 
 ---
 

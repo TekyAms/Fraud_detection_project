@@ -43,6 +43,11 @@ composite_risk = st.sidebar.slider("Composite Risk Score (Score Global)", 0.0, 1
 channel = st.sidebar.selectbox("Canal de transaction", ["Web", "Mobile", "POS", "IB", "ECOM", "ATM"])
 merchant_category = st.sidebar.selectbox("Catégorie du Commerçant", ["Grocery", "Entertainment", "Transport", "Fuel", "Transfer", "Retail"])
 
+# Variables temporelles (contribuent à l'encodage cyclique)
+hour = st.sidebar.slider("Heure de la transaction", 0, 23, 12)
+day_of_week = st.sidebar.selectbox("Jour de la semaine", ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"], index=3)
+month = st.sidebar.slider("Mois de la transaction", 1, 12, 6)
+
 # 4. Reconstruction des features à la volée pour la prédiction
 # On crée un dictionnaire vide aligné sur l'ordre EXACT de l'entraînement
 base_data = {col: 0.0 for col in feature_columns}
@@ -54,10 +59,22 @@ base_data['velocity_score'] = velocity_score
 base_data['amount_vs_mean_ratio'] = amount_vs_mean_ratio
 base_data['composite_risk'] = composite_risk
 
-# Remplissage des variables temporelles par défaut (moyennes) pour éviter le bruit
-base_data['hour'] = 12.0
-base_data['day_of_week'] = 3.0
-base_data['month'] = 6.0
+# Variables temporelles + encodage cyclique cohérent avec les valeurs choisies
+day_index = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"].index(day_of_week)
+base_data['hour'] = float(hour)
+base_data['day_of_week'] = float(day_index)
+base_data['month'] = float(month)
+
+base_data['hour_sin'] = np.sin(2 * np.pi * hour / 24)
+base_data['hour_cos'] = np.cos(2 * np.pi * hour / 24)
+base_data['day_sin'] = np.sin(2 * np.pi * day_index / 7)
+base_data['day_cos'] = np.cos(2 * np.pi * day_index / 7)
+base_data['month_sin'] = np.sin(2 * np.pi * month / 12)
+base_data['month_cos'] = np.cos(2 * np.pi * month / 12)
+
+# Flags temporels dérivés des mêmes valeurs
+base_data['is_weekend'] = 1.0 if day_index >= 5 else 0.0
+base_data['is_peak_hour'] = 1.0 if hour in (10, 11, 14, 15, 16) else 0.0
 
 # Gestion du One-Hot Encoding manuel pour la saisie (Exemple pour channel et merchant)
 if f"channel_{channel}" in base_data:
