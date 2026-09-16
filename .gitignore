@@ -1,0 +1,32 @@
+# Environnement virtuel
+.venv/
+venv/
+env/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Données volumineuses (trop lourdes pour GitHub / Streamlit)
+data/nibss_fraud_dataset.csv
+data/*.csv
+!data/data_dictionary.csv
+
+# Artefacts de modèle (sérialisation temporaire)
+models/*.joblib
+*.log
+
+# Secrets
+.env
