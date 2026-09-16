@@ -29,6 +29,18 @@ Ce projet permet de **simuler l'évaluation d'une transaction bancaire** : l'uti
 
 ---
 
+##  Interface
+
+### Transaction validée (comportement sain)
+
+![Transaction validée](assets/img1_test.png)
+
+### Transaction bloquée (suspicion de fraude)
+
+![Transaction bloquée](assets/img2_test.png)
+
+---
+
 ##  Fonctionnalités
 
 -  **Simulateur interactif** : réglage dynamique des paramètres de transaction via la barre latérale
@@ -46,6 +58,9 @@ Fraud_detection_project/
 ├── app.py                    # Application Streamlit (interface de simulation)
 ├── exploration.ipynb         # Analyse exploratoire + entraînement & évaluation des modèles
 ├── requirements.txt          # Dépendances Python minimales pour l'application
+├── assets/
+│   ├── img1_test.png         # Capture de l'application : transaction validée
+│   └── img2_test.png         # Capture de l'application : transaction bloquée
 ├── data/
 │   ├── nibss_fraud_dataset.csv   #  1M transactions (~423 MB) 
 │   └── data_dictionary.csv       #  Dictionnaire des 38 colonnes du jeu de données
